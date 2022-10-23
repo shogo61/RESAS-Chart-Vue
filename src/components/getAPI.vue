@@ -10,7 +10,7 @@
 </template> -->
 <template>
   <div class="prefectures-area">
-		{{showPrefectures}}
+		{{selectedPrefectures}}
     <div
       v-for="prefecture in prefectures"
       :key="prefecture.id"
@@ -26,13 +26,11 @@
 			/>
 				{{prefecture.id}}
         {{prefecture.name}}
-				<!-- <p>
-					{{displayChart(prefecture.id)}}
-				</p>
-				{{populationData}} -->
       </label>
     </div>
-		
+		<div id="chart-area">
+			{{getPopulation(selectedPrefectures)}}
+		</div>
   </div>
 </template>
 
@@ -49,7 +47,7 @@ export default {
 		return {
 			prefectures: [],
 			populationData: [],
-			showPrefectures: []
+			selectedPrefectures: []
     };
   },
   mounted() {
@@ -83,30 +81,36 @@ export default {
 			// var id = prefecrure.id
       console.log(this.prefectures)
     },
+		// チェックボックスがクリックされた時の処理
+		// チェックがついたらselectedPrefectureに追加し、外れたらspliceで削除する
 		changed(prefecture){
 			prefecture.isChecked = !prefecture.isChecked
 			console.log(prefecture)
 			if(prefecture.isChecked){
-				this.showPrefectures.push(prefecture.name);
+				let val = {id: prefecture.id, name:prefecture.name};
+				this.selectedPrefectures.push(val);
 			}else{
-				this.showPrefectures.splice(this.showPrefectures.indexOf(prefecture.name),1)
+				//prefecture.nameのインデックスを検索して削除
+				this.selectedPrefectures.splice(this.selectedPrefectures.indexOf(prefecture.name),1)
 			}
-		}
+		},
 		// 各年の人口を取得
-    // displayChart: async function(id) {
-		// 	console.log(id)
-    //   const path = `population/composition/perYear?cityCode=11362&prefCode=${id}`;
-    //   const response = await this.fetchAPI(path);
-    //   console.log(response);
-		// 	this.populationData = []
-		// 	cnt ++;
-		// 	// console.log(cnt)
-		// 	if(cnt<47){
-		// 		for(var i=0;i<8;i++){
-		// 			this.populationData.push(response.data.result.data[0].data[i].value)
-		// 		}
-		// 	}
-		// }
+    getPopulation: async function(selectedPrefecture){
+			for(var i=0;i<this.selectedPrefectures.length;i++){
+				this.populationData.splice(0);
+				const path = `population/composition/perYear?cityCode=11362&prefCode=${selectedPrefecture[i].id}`;
+				const response = await this.fetchAPI(path);
+				console.log(response);
+			// cnt ++;
+			// console.log(cnt)
+				
+				// console.log(response)
+				for(var j=0;j<8;j++){
+					this.populationData.push(response.data.result.data[0].data[j].value)
+				}
+			}
+			console.log(this.populationData)
+		}
   },
 };
 </script>
