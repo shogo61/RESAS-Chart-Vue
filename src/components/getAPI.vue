@@ -98,7 +98,7 @@ export default {
     getPopulation: async function(selectedPrefecture){
 			for(var i=0;i<this.selectedPrefectures.length;i++){
 				this.populationData.splice(0);
-				const path = `population/composition/perYear?cityCode=11362&prefCode=${selectedPrefecture[i].id}`;
+				const path = `population/composition/perYear?&prefCode=${selectedPrefecture[i].id}`;
 				const response = await this.fetchAPI(path);
 				console.log(response);
 			// cnt ++;
