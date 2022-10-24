@@ -14,7 +14,7 @@
         :for="prefecture.id"
         @change="changed(prefecture)"
       />
-      {{ prefecture.id }}
+      <!-- {{ prefecture.id }} -->
       {{ prefecture.name }}
     </label>
   </div>
@@ -57,7 +57,6 @@ export default {
       const path = "prefectures";
       const response = await this.fetchAPI(path);
       console.log(response);
-      // var id;
       this.prefectures = response.data.result.map((val) => {
         // valにprefCode,prefNameを格納する
         return {
@@ -69,31 +68,39 @@ export default {
       console.log(this.prefectures);
     },
     // チェックボックスがクリックされた時の処理
-    // チェックがついたらselectedPrefectureに追加し、外れたらspliceで削除する
     changed(prefecture) {
+			// 初期値はfalse
       prefecture.isChecked = !prefecture.isChecked;
       console.log(prefecture);
+			// 初期状態だと必ずtrueになる
       if (prefecture.isChecked) {
+				// 人口を取得する
         this.getPopulation(prefecture);
       } else {
-        //prefecture.nameのインデックスを検索して削除
-        this.selectedPrefectures.splice(
-          this.selectedPrefectures.indexOf(prefecture.name)
-        );
-        //removeChart();
+				// AppでremeveSeriesを実行する
+				this.$emit("onRemoveSeries",prefecture.name)
       }
     },
     // 各年の人口を取得
     getPopulation: async function (prefecture) {
-
+			// 1960-2015までの人口が5年おきに格納されていく
 			const population = [];
+			// データを取得
       const path = `population/composition/perYear?&prefCode=${prefecture.id}`;
       const response = await this.fetchAPI(path);
+			// 2015年までなのでi<12
+			//欲しいのは総人口なので常にdata[0]
       for (var i = 0; i < 12; i++) {
 				population.push(response.data.result.data[0].data[i].value);
       }
+			// AppでaddSeriesを実行する
       this.$emit("onAddSeries", population, prefecture.name);
     },
   },
 };
 </script>
+<style>
+.prefecture{
+	display: inline-block;
+}
+</style>
