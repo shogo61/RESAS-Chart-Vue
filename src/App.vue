@@ -11,10 +11,6 @@
 <script>
 import controlPref from "./components/controlPref.vue";
 import Highcharts from "../node_modules/highcharts";
-// import jQuery from "jquery";
-
-// window.$ = window.jQuery = jQuery;
-// var $ = require( "jquery" );
 
 export default {
   name: "App",
@@ -44,7 +40,8 @@ export default {
           },
           // 実測値が2015年まで。それ以降は推測値
           categories: [
-            1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015,
+            1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010,
+            2015,
           ],
         },
         yAxis: {
@@ -79,15 +76,13 @@ export default {
     },
     // seriesにデータを追加する
     addSeries: async function (population, name) {
-      console.log(population);
+      // highchartsでグラフを描画するためにデータを格納する
       this.options.series.push({
         name: name,
         data: population,
       });
       // グラフを上書きする
       this.drawChart(this.options);
-      console.log(this.options);
-      console.log("");
     },
     // seriesからデータを削除する
     removeSeries: function (prefectureName) {
@@ -97,12 +92,9 @@ export default {
       );
       //seriesからdeleteIndex番目を削除する
       this.options.series.splice(deleteIndex, 1);
-
       //グラフを上書きする
       this.drawChart(this.options);
-      console.log(this.options.series);
     },
-
   },
 };
 </script>

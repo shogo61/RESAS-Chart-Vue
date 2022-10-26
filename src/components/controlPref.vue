@@ -1,5 +1,4 @@
 <template>
-  <!-- <h2>都道府県を選択</h2> -->
 	<div class="toggle-title">
 		<button type="button">都道府県を選択   ▼</button>
 	</div>
@@ -13,8 +12,6 @@
         <input
           type="checkbox"
           :id="prefecture.id"
-          :checked="prefecture.isChecked"
-          :for="prefecture.id"
           @change="changed(prefecture)"
         />
         {{ prefecture.name }}
@@ -27,7 +24,7 @@
 import axios from "axios";
 import $ from 'jquery'
 
-const ACCESS_TOKEN = "Ea3RqjQjtf8O2XxJHuVlzUJLSxoClMzDpDSwg1IO";
+var ACCESS_TOKEN = process.env.VUE_APP_API_KEY;
 
 export default {
   data() {
@@ -42,16 +39,17 @@ export default {
 		this.getPrefectures();
 
 		// ここだけjQueryで記述
+		// 都道府県選択を開閉表示できるように
 		$(function(){
 			//クリックで動く
 			$('.toggle-title').click(function(){
-				console.log("to")
 				$('.prefectures-area').toggleClass('active');
 				$(this).next('prefectures-area').slideToggle();
 			});
 		});
   },
   methods: {
+		// APIでデータを持ってくる
     fetchAPI: function (path) {
       const response = axios.get(
         `https://opendata.resas-portal.go.jp/api/v1/${path}`,
@@ -61,11 +59,11 @@ export default {
       );
       return response;
     },
+		// 都道府県の表示
     getPrefectures: async function () {
       //asyncとawaitを付けないとresponseのresult以降を読み込まない
       const path = "prefectures";
       const response = await this.fetchAPI(path);
-      console.log(response);
       this.prefectures = response.data.result.map((val) => {
         // valにprefCode,prefNameを格納する
         return {
@@ -74,14 +72,12 @@ export default {
           isChecked: false,
         };
       });
-      console.log(this.prefectures);
     },
     // チェックボックスがクリックされた時の処理
     changed(prefecture) {
       // 初期値はfalse
       prefecture.isChecked = !prefecture.isChecked;
-      console.log(prefecture);
-      // 初期状態だと必ずtrueになる
+      // *初期状態だと必ずtrueになる
       if (prefecture.isChecked) {
         // 人口を取得する
         this.getPopulation(prefecture);
@@ -109,7 +105,7 @@ export default {
     // 連打防止
     // 連打されるとグラフが二重に表示されてしまう
     disabledCheckbox(id) {
-      // prefecture.idを非活性化
+      // 選択されたチェックボックスを非活性化
       document.getElementById(id).setAttribute("disabled", true);
       // 500m秒後にdisabledを解除
       // 連打しても二重に表示される心配のない時間+正当な利用なら連打の必要はないのでこの時間設定
@@ -125,6 +121,7 @@ export default {
 	text-align: left;
 	margin-left:20px;
 	margin:20px;
+	width:185px
 }
 .toggle-title button{
 	background-color: #fff;
