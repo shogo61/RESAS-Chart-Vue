@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+	<div id="app">
     <h1>都道府県別 人口の推移</h1>
     <controlPref @onAddSeries="addSeries" @onRemoveSeries="removeSeries" />
     <div id="chart-area">
@@ -10,7 +10,7 @@
 
 <script>
 import controlPref from "./components/controlPref.vue";
-import Highcharts from "../node_modules/highcharts";
+import Highcharts from "highcharts";
 
 export default {
   name: "App",
